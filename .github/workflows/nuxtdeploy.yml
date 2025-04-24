@@ -27,5 +27,11 @@ jobs:
     - name: Build Nuxt.js project
       run: npm run build
 
-    - name: Serve Nuxt.js project
-      run: node .output/server/index.mjs
+    - name: Serve Nuxt.js project in the background
+      run: |
+        nohup node .output/server/index.mjs &
+        echo $! > server.pid  # Save the server process ID
+
+    - name: Notify GitHub Actions that the deploy is complete
+      run: |
+        echo "Deployment is complete!"  # Custom message to show that deployment is done
