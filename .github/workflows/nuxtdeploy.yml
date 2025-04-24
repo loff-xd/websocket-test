@@ -1,0 +1,31 @@
+name: Deploy Nuxt.js Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Nuxt.js project
+      run: npm run build
+
+    - name: Serve Nuxt.js project
+      run: node .output/server/index.mjs
