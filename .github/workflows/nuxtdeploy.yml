@@ -21,24 +21,30 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Cache dependencies
+    - name: Cache pnpm cache
       uses: actions/cache@v3
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-pnpm-
 
-    - name: Install dependencies
-      run: npm install
+    - name: Install dependencies using pnpm
+      run: pnpm install
 
     - name: Build Nuxt.js project
-      run: npm run build
+      run: npm run build # or yarn build if you are using yarn
 
-    - name: Serve Nuxt.js project in the background
+    - name: Move build to destination directory
       run: |
-        nohup node .output/server/index.mjs &
-        echo $! > server.pid # Save the server process ID
+        mkdir -p /home/ubuntu/ghdeploy
+        mv -f .output/server /home/ubuntu/ghdeploy/
+        mv -f .output/public /home/ubuntu/ghdeploy/
+        mv -f .output/nitro.json /home/ubuntu/ghdeploy/
+
+    - name: Restart systemd service
+      run: |
+        systemctl restart nuxt-chat.service
 
     - name: Notify GitHub Actions that the deploy is complete
       run: |
