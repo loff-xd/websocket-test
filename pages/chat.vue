@@ -7,7 +7,7 @@ const username = useState<string | undefined>('username')
 const toaster = useToast()
 
 // Open socket
-const { send, data, status } = useWebSocket('http://localhost:3000/api/socket', {
+const { send, data, status, close } = useWebSocket('http://localhost:3000/api/socket', {
     autoReconnect: true
 })
 
@@ -47,6 +47,7 @@ const onSendEvent = () => {
 
 // Exit
 const onExit = async () => {
+    close()
     username.value = undefined
     await navigateTo('/')
 }
