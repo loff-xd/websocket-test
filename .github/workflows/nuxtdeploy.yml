@@ -21,19 +21,19 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Cache pnpm cache
+    - name: Cache dependencies
       uses: actions/cache@v3
       with:
-        path: ~/.pnpm-store
-        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-pnpm-
+          ${{ runner.os }}-node-
 
-    - name: Install dependencies using pnpm
-      run: pnpm install
+    - name: Install dependencies
+      run: npm install
 
     - name: Build Nuxt.js project
-      run: npm run build # or yarn build if you are using yarn
+      run: npm run build
 
     - name: Move build to destination directory
       run: |
@@ -45,7 +45,3 @@ jobs:
     - name: Restart systemd service
       run: |
         systemctl restart nuxt-chat.service
-
-    - name: Notify GitHub Actions that the deploy is complete
-      run: |
-        echo "Deployment is complete!" # Custom message to show that deployment is done
