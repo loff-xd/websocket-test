@@ -80,7 +80,7 @@ onMounted(() => {
         </UCard>
         <UCard>
             <div class="flex flex-row gap-2 items-center">
-                <UInput class="w-full" v-model="inputText" :placeholder="`${username} says...`"
+                <UTextarea class="w-full" v-model="inputText" :placeholder="`${username} says...`" :rows="1"
                     @keyup.enter="onSendEvent" />
                 <UButton label="Send" @click="onSendEvent" />
             </div>
