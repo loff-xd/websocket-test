@@ -7,7 +7,8 @@ const username = useState<string | undefined>('username')
 const toaster = useToast()
 
 // Open socket
-const { send, data, status, close } = useWebSocket('http://localhost:3000/api/socket', {
+const url = useRequestURL()
+const { send, data, status, close } = useWebSocket(`${url.origin}/api/socket`, {
     autoReconnect: true
 })
 
@@ -62,7 +63,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col justify-end gap-4 h-svh p-6">
+    <div class="flex flex-col justify-end gap-4 h-dvh p-6">
         <UCard>
             <div class="flex flex-row items-center justify-between">
                 <p><b>Chatting as: </b>{{ username }}</p>
