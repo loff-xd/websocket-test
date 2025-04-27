@@ -6,9 +6,6 @@ declare module '#auth-utils' {
     interface UserSession {
         loggedIn: boolean
     }
-
-    interface SecureSessionData {
-    }
 }
 
 export { }

@@ -49,6 +49,7 @@ const onSendEvent = () => {
 // Exit
 const onExit = async () => {
     close()
+    timeout ? clearTimeout(timeout) : null
     timeout = null
     await clear()
     await navigateTo('/')
