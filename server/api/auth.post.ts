@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         if (body && body.username) {
-            const session = await setUserSession(event, { user: { username: body.username }, loggedIn: true })
+            const session = await setUserSession(event, { user: { username: body.username, password: '' } })
             return session
         }
     } catch (error) {

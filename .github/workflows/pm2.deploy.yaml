@@ -21,4 +21,7 @@ jobs:
 
       - run: npm install
       - run: npm run build
-      - run: pm2 restart nuxt-chat
+      - run: pm2 stop nuxt-chat
+      - run: rm -rf /home/ubuntu/nuxt-chat/*
+      - run: cp -R .output/* /home/ubuntu/nuxt-chat/
+      - run: pm2 start nuxt-chat
