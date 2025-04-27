@@ -14,17 +14,12 @@ jobs:
       - name: Get Node.js 20
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
       - uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - run: pnpm install
-      - run: pnpm run build
+      - run: npm install
+      - run: npm run build
       - run: pm2 stop nuxt-chat
       - run: rm -rf /home/ubuntu/nuxt-chat/*
       - run: cp -R .output/* /home/ubuntu/nuxt-chat/
