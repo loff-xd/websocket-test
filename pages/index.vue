@@ -1,10 +1,25 @@
 <script setup lang="ts">
 
-const username = useState<string>('username', () => '')
+const username = ref<string>('')
+const { fetch } = useUserSession()
 
 const onLogin = async () => {
     if (username.value !== '' && username.value.length < 24) {
-        await navigateTo("/chat")
+        const success = await $fetch('/api/auth', {
+            method: "POST",
+            body: {
+                username: username.value
+            }
+        })
+
+        await fetch()
+
+        if (success) {
+            await navigateTo('/chat')
+        } else {
+            useToast().add({ title: "Login Failed", description: "Failed to login, please try again", color: 'error' })
+        }
+
     } else {
         useToast().add({ title: "Invalid username", description: "Please enter a valid username less than 24 characters", color: "error", icon: "material-symbols:warning" })
     }

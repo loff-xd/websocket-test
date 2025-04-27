@@ -3,7 +3,7 @@ import { useWebSocket } from '@vueuse/core';
 
 const inputText = ref<string>('')
 const chatMessages = ref<any[]>([])
-const username = useState<string | undefined>('username')
+const { user, clear } = useUserSession()
 const toaster = useToast()
 
 // Open socket
@@ -20,8 +20,8 @@ watch(data, () => {
 // Connection warning
 let timeout: NodeJS.Timeout | null = null
 watch(status, () => {
-
-    if (status.value === 'CLOSED') {
+    console.log(status.value)
+    if (status.value === 'CLOSED' && !timeout) {
         timeout = setTimeout(() => {
             if (!toaster.toasts.value.some(toast => toast.title === "Connection Error")) {
                 toaster.add({
@@ -31,7 +31,7 @@ watch(status, () => {
             }
         }, 5000)
 
-    } else {
+    } else if (status.value === 'OPEN') {
         toaster.clear()
         if (timeout) {
             clearTimeout(timeout)
@@ -42,22 +42,20 @@ watch(status, () => {
 
 // Message send
 const onSendEvent = () => {
-    send(JSON.stringify({ user: username.value, message: inputText.value }))
+    send(JSON.stringify({ user: user.value?.username, message: inputText.value }))
     inputText.value = ''
 }
 
 // Exit
 const onExit = async () => {
     close()
-    username.value = undefined
+    timeout = null
+    await clear()
     await navigateTo('/')
 }
 
 onMounted(() => {
-    if (!username.value) {
-        return navigateTo('/')
-    }
-    send(JSON.stringify({ user: username.value, message: '[Joined]' }))
+    //send(JSON.stringify({ user: user.value?.username, message: '[Joined]' }))
 })
 
 </script>
@@ -66,7 +64,9 @@ onMounted(() => {
     <div class="flex flex-col justify-end gap-4 h-dvh p-6">
         <UCard>
             <div class="flex flex-row items-center justify-between">
-                <p><b>Chatting as: </b>{{ username }}</p>
+                <AuthState v-slot="{ loggedIn }">
+                    <p v-if="loggedIn"><b>Chatting as: </b>{{ user!.username }}</p>
+                </AuthState>
                 <UButton label="Exit" @click="onExit" />
             </div>
         </UCard>
@@ -80,8 +80,8 @@ onMounted(() => {
         </UCard>
         <UCard>
             <div class="flex flex-row gap-2 items-center">
-                <UTextarea class="w-full" v-model="inputText" :placeholder="`${username} says...`" :rows="1"
-                    @keyup.enter="onSendEvent" />
+                <UTextarea class="w-full" v-model="inputText" :placeholder="`Chatting as ${user!.username}...`"
+                    :rows="1" @keyup.enter="onSendEvent" />
                 <UButton label="Send" @click="onSendEvent" />
             </div>
         </UCard>
